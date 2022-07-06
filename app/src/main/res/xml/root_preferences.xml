@@ -1,0 +1,65 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory/>
+    <PreferenceCategory/>
+
+
+    <PreferenceCategory app:title="@string/messages_header"
+        >
+
+<!--        <EditTextPreference-->
+<!--            app:key="signature"-->
+<!--            app:title="@string/signature_title"-->
+<!--            app:useSimpleSummaryProvider="true" />-->
+
+<!--        <ListPreference-->
+<!--            app:defaultValue="reply"-->
+<!--            app:entries="@array/reply_entries"-->
+<!--            app:entryValues="@array/reply_values"-->
+<!--            app:key="reply"-->
+<!--            app:title="@string/reply_title"-->
+<!--            app:useSimpleSummaryProvider="true" />-->
+
+        <MultiSelectListPreference
+            app:dialogTitle="@string/show_items_title"
+            app:key="hide_elements"
+            app:summary="@string/hide_elements_sub"
+            app:title="@string/show_items_title"
+            app:entries="@array/show_clock_items"
+            app:entryValues="@array/show_clock_items"
+            app:defaultValue="@array/empty_array" />
+
+        <SwitchPreferenceCompat
+            app:key="always_on"
+            app:title="@string/always_on" />
+
+        <SwitchPreferenceCompat
+            app:key="wakelock_on"
+            app:title="@string/wakelock_on" />
+
+        <SwitchPreferenceCompat
+            app:key="custom_color"
+            app:title="@string/custom_color" />
+
+
+
+    </PreferenceCategory>
+
+<!--    <PreferenceCategory app:title="@string/sync_header">-->
+
+<!--        <SwitchPreferenceCompat-->
+<!--            app:key="sync"-->
+<!--            app:title="@string/sync_title" />-->
+
+<!--        <SwitchPreferenceCompat-->
+<!--            app:dependency="sync"-->
+<!--            app:key="attachment"-->
+<!--            app:summaryOff="@string/attachment_summary_off"-->
+<!--            app:summaryOn="@string/attachment_summary_on"-->
+<!--            app:title="@string/attachment_title" />-->
+
+<!--    </PreferenceCategory>-->
+    <PreferenceCategory/>
+    <PreferenceCategory/>
+
+</PreferenceScreen>

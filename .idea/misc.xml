@@ -4,6 +4,9 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="app/src/main/res/font/test.xml" value="0.9275" />
+        <entry key="app/src/main/res/layout/activity_color_picker.xml" value="1.0" />
+        <entry key="app/src/main/res/layout/settings_activity.xml" value="0.7724056603773585" />
+        <entry key="app/src/main/res/xml/root_preferences.xml" value="0.52" />
       </map>
     </option>
   </component>

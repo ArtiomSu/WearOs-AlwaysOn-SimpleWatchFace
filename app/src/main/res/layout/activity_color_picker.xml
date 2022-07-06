@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:pikolo="http://schemas.android.com/apk/res-auto">
+
+    <com.madrapps.pikolo.HSLColorPicker
+        android:id="@+id/colorPicker"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        pikolo:layout_constraintBottom_toBottomOf="parent"
+        pikolo:layout_constraintEnd_toEndOf="parent"
+        pikolo:layout_constraintStart_toStartOf="parent"
+        pikolo:layout_constraintTop_toTopOf="parent"
+        pikolo:hue_arc_length="360"
+        pikolo:hue_radius_offset="5dp"
+        pikolo:hue_start_angle="0"
+        pikolo:indicator_radius="10dp"
+        pikolo:indicator_stroke_width="0dp"
+        pikolo:lightness_arc_length="360"
+        pikolo:lightness_radius_offset="30dp"
+        pikolo:lightness_start_angle="0"
+        pikolo:saturation_arc_length="360"
+        pikolo:saturation_radius_offset="55dp"
+        pikolo:saturation_start_angle="0"
+        pikolo:stroke_width="0dp" />
+
+    <Button
+        android:id="@+id/back_button"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        pikolo:layout_constraintBottom_toBottomOf="@+id/colorPicker"
+        pikolo:srcCompat="?android:attr/homeAsUpIndicator"
+        pikolo:layout_constraintEnd_toEndOf="parent"
+        pikolo:layout_constraintStart_toStartOf="parent"
+        pikolo:layout_constraintTop_toTopOf="parent"
+        android:background="@android:drawable/ic_delete"
+        android:backgroundTint="#EF4343"/>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -21,6 +21,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    buildFeatures {
+        viewBinding true
+    }
 }
 
 dependencies {
@@ -32,5 +35,9 @@ dependencies {
     implementation 'com.google.android.support:wearable:2.9.0'
     implementation 'com.google.android.gms:play-services-base:18.1.0'
     implementation 'androidx.palette:palette:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.4.2'
+    implementation 'androidx.preference:preference:1.2.0'
+    implementation 'com.github.madrapps:pikolo:2.0.2'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     compileOnly 'com.google.android.wearable:wearable:2.9.0'
 }

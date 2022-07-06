@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -17,6 +18,7 @@ import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.PowerManager;
 import android.support.wearable.watchface.CanvasWatchFaceService;
 import android.support.wearable.watchface.WatchFaceStyle;
 import android.util.Log;
@@ -29,6 +31,8 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
@@ -116,16 +120,37 @@ public class MyWatchFace extends CanvasWatchFaceService {
 
         private Typeface typeface;
 
-        private int mainColor = Color.rgb(255,255,255);
+        private PowerManager.WakeLock mWakeLock;
 
+        private boolean always_on = false;
+        private boolean wakelock_on = false;
+        private boolean custom_color_enabled = false;
+
+
+        private int mainColor = Color.rgb(255,255,255);
+        private int custom_color = mainColor;
         @Override
         public void onCreate(SurfaceHolder holder) {
             super.onCreate(holder);
+
+            SharedPreferences prefs = getApplicationContext().getSharedPreferences(
+                    "terminal_heat_sink.simplewatchface_preferences", Context.MODE_PRIVATE);
+
+            always_on = prefs.getBoolean("always_on", false);
+            wakelock_on = prefs.getBoolean("wakelock_on", false);
+            custom_color_enabled = prefs.getBoolean("custom_color", false);
+            custom_color = prefs.getInt("font_color", mainColor);
 
             setWatchFaceStyle(new WatchFaceStyle.Builder(MyWatchFace.this)
                     .setAcceptsTapEvents(true)
                     .setHideStatusBar(true)
                     .build());
+
+            if(wakelock_on) {
+                PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+                mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "simplewatchface:mainwakelock");
+                mWakeLock.acquire();
+            }
 
             mCalendar = Calendar.getInstance();
 
@@ -153,6 +178,9 @@ public class MyWatchFace extends CanvasWatchFaceService {
         @Override
         public void onDestroy() {
             mUpdateTimeHandler.removeMessages(MSG_UPDATE_TIME);
+            if(mWakeLock != null && mWakeLock.isHeld()){
+                mWakeLock.release();
+            }
             super.onDestroy();
         }
 
@@ -185,6 +213,52 @@ public class MyWatchFace extends CanvasWatchFaceService {
 
         @Override
         public void onDraw(Canvas canvas, Rect bounds) {
+
+            SharedPreferences prefs = getApplicationContext().getSharedPreferences(
+                    "terminal_heat_sink.simplewatchface_preferences", Context.MODE_PRIVATE);
+
+            //Log.d("prefs get", prefs.getString("reply", "failed"));
+
+            always_on = prefs.getBoolean("always_on", false);
+            wakelock_on = prefs.getBoolean("wakelock_on", false);
+            custom_color_enabled = prefs.getBoolean("custom_color", false);
+
+            custom_color = prefs.getInt("font_color", mainColor);
+
+
+            Log.d("prefs get", "always_on " + always_on);
+            Log.d("prefs get", "wakelock_on " + wakelock_on);
+
+            if(wakelock_on){
+                if(mWakeLock == null || !mWakeLock.isHeld()){
+                    PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+                    mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "simplewatchface:mainwakelock");
+                    mWakeLock.acquire();
+                }
+            }else{
+                if(mWakeLock != null && mWakeLock.isHeld()){
+                    mWakeLock.release();
+                }
+            }
+
+            Set<String> hide_elements =  prefs.getStringSet("hide_elements", null);
+
+            boolean show_up_time = true;
+            boolean show_network = true;
+            boolean show_battery = true;
+            boolean show_day = true;
+            boolean show_month = true;
+            boolean show_year = true;
+
+            if(hide_elements != null){
+                show_up_time = !hide_elements.contains("Uptime");
+                show_network = !hide_elements.contains("Wifi");
+                show_battery = !hide_elements.contains("Battery");
+                show_day = !hide_elements.contains("Day");
+                show_month = !hide_elements.contains("Month");
+                show_year = !hide_elements.contains("Year");
+            }
+
             long now = System.currentTimeMillis();
             mCalendar.setTimeInMillis(now);
 
@@ -212,31 +286,37 @@ public class MyWatchFace extends CanvasWatchFaceService {
             String output_month = month_word+" ("+month_s+")";
 
             if(seconds_s.equals("00")){ // update this every minute
-                uptime_text = read_from_sys("uptime | cut -d \",\" -f1  | cut -d \" \" -f3-10\n",getApplicationContext()).trim();
-                ConnectivityManager connMgr =
-                        (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-
-                for (Network network : connMgr.getAllNetworks()) {
-                    NetworkInfo networkInfo = connMgr.getNetworkInfo(network);
-                    if (networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
-                        isWifiConn |= networkInfo.isConnected();
-                    }
-                    if (networkInfo.getType() == ConnectivityManager.TYPE_BLUETOOTH) {
-                        isBlueTooth |= networkInfo.isConnected();
-                    }
+                if(show_up_time) {
+                    uptime_text = read_from_sys("uptime | cut -d \",\" -f1  | cut -d \" \" -f3-10\n", getApplicationContext()).trim();
                 }
 
-                network_text = "Wifi: " + (isWifiConn ? "on" : "off") + " Blue: " + (isBlueTooth ? "on" : "off");
+                if(show_network) {
+                    ConnectivityManager connMgr =
+                            (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+                    for (Network network : connMgr.getAllNetworks()) {
+                        NetworkInfo networkInfo = connMgr.getNetworkInfo(network);
+                        if (networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
+                            isWifiConn |= networkInfo.isConnected();
+                        }
+                        if (networkInfo.getType() == ConnectivityManager.TYPE_BLUETOOTH) {
+                            isBlueTooth |= networkInfo.isConnected();
+                        }
+                    }
+
+                    network_text = "Wifi: " + (isWifiConn ? "on" : "off") + " Blue: " + (isBlueTooth ? "on" : "off");
+                }
             }
             mBackgroundPaint.setAntiAlias(true);
 
+            int font_color = custom_color_enabled ? custom_color : mainColor;
 
 
             Paint font_info = new Paint();
             font_info.setAntiAlias(true);
             font_info.setTextSize(20);
             font_info.setTypeface(typeface);
-            font_info.setColor(mainColor);
+            font_info.setColor(font_color);
 
 
             IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
@@ -246,62 +326,74 @@ public class MyWatchFace extends CanvasWatchFaceService {
             float batteryPct = level / (float)scale;
             int percent = (int)(batteryPct*100);
 
-            Paint battery_paint = new Paint();
-            battery_paint.setAntiAlias(true);
-            battery_paint.setTextSize(font_size_battery);
-            battery_paint.setTypeface(typeface);
-            battery_paint.setColor(mainColor);
-            battery_paint.setTextAlign(Paint.Align.CENTER);
-            canvas.drawText("Battery is at "+percent+"%",mCenterX,mCenterY-font_size_time/2,battery_paint);
+            if(show_battery) {
+                Paint battery_paint = new Paint();
+                battery_paint.setAntiAlias(true);
+                battery_paint.setTextSize(font_size_battery);
+                battery_paint.setTypeface(typeface);
+                battery_paint.setColor(font_color);
+                battery_paint.setTextAlign(Paint.Align.CENTER);
+                canvas.drawText("Battery is at " + percent + "%", mCenterX, mCenterY - font_size_time / 2, battery_paint);
+            }
 
-            Paint uptime_p = new Paint();
-            uptime_p.setAntiAlias(true);
-            uptime_p.setTextSize(font_size_uptime);
-            uptime_p.setTypeface(typeface);
-            uptime_p.setColor(mainColor);
-            uptime_p.setTextAlign(Paint.Align.CENTER);
-            canvas.drawText(uptime_text,mCenterX,mCenterY-font_size_time/2-font_size_battery-font_size_network,uptime_p);
+            if(show_up_time) {
+                Paint uptime_p = new Paint();
+                uptime_p.setAntiAlias(true);
+                uptime_p.setTextSize(font_size_uptime);
+                uptime_p.setTypeface(typeface);
+                uptime_p.setColor(font_color);
+                uptime_p.setTextAlign(Paint.Align.CENTER);
+                canvas.drawText(uptime_text, mCenterX, mCenterY - font_size_time / 2 - font_size_battery - font_size_network, uptime_p);
+            }
 
-            Paint network_p = new Paint();
-            network_p.setAntiAlias(true);
-            network_p.setTextSize(font_size_network);
-            network_p.setTypeface(typeface);
-            network_p.setColor(mainColor);
-            network_p.setTextAlign(Paint.Align.CENTER);
-            canvas.drawText(network_text,mCenterX,mCenterY-font_size_time/2-font_size_battery,network_p);
+            if(show_network) {
+                Paint network_p = new Paint();
+                network_p.setAntiAlias(true);
+                network_p.setTextSize(font_size_network);
+                network_p.setTypeface(typeface);
+                network_p.setColor(font_color);
+                network_p.setTextAlign(Paint.Align.CENTER);
+                canvas.drawText(network_text, mCenterX, mCenterY - font_size_time / 2 - font_size_battery, network_p);
+            }
 
 
             Paint time_p = new Paint();
             time_p.setAntiAlias(true);
-            time_p.setColor(mainColor);
+            time_p.setColor(font_color);
             time_p.setTextSize(font_size_time);
             time_p.setTypeface(typeface);
             time_p.setTextAlign(Paint.Align.CENTER);
             canvas.drawText(output_time,mCenterX ,mCenterY+30,time_p);
 
-            Paint day_p = new Paint();
-            day_p.setAntiAlias(true);
-            day_p.setColor(mainColor);
-            day_p.setTextSize(font_size_date);
-            day_p.setTypeface(typeface);
-            day_p.setTextAlign(Paint.Align.CENTER);
-            canvas.drawText(output_day,mCenterX,mCenterY+font_size_time-30,day_p);
+            if(show_day) {
+                Paint day_p = new Paint();
+                day_p.setAntiAlias(true);
+                day_p.setColor(font_color);
+                day_p.setTextSize(font_size_date);
+                day_p.setTypeface(typeface);
+                day_p.setTextAlign(Paint.Align.CENTER);
+                canvas.drawText(output_day, mCenterX, mCenterY + font_size_time - 30, day_p);
+            }
 
-            Paint month_p = new Paint();
-            month_p.setAntiAlias(true);
-            month_p.setColor(mainColor);
-            month_p.setTextSize(font_size_month);
-            month_p.setTypeface(typeface);
-            month_p.setTextAlign(Paint.Align.CENTER);
-            canvas.drawText(output_month,mCenterX,mCenterY+font_size_time-40+font_size_date,month_p);
+            if(show_month) {
+                Paint month_p = new Paint();
+                month_p.setAntiAlias(true);
+                month_p.setColor(font_color);
+                month_p.setTextSize(font_size_month);
+                month_p.setTypeface(typeface);
+                month_p.setTextAlign(Paint.Align.CENTER);
+                canvas.drawText(output_month, mCenterX, mCenterY + font_size_time - 40 + font_size_date, month_p);
+            }
 
-            Paint year_p = new Paint();
-            year_p.setAntiAlias(true);
-            year_p.setColor(mainColor);
-            year_p.setTextSize(font_size_year);
-            year_p.setTypeface(typeface);
-            year_p.setTextAlign(Paint.Align.CENTER);
-            canvas.drawText(""+year,mCenterX,mCenterY+font_size_time-45+font_size_date+font_size_month,year_p);
+            if(show_year) {
+                Paint year_p = new Paint();
+                year_p.setAntiAlias(true);
+                year_p.setColor(font_color);
+                year_p.setTextSize(font_size_year);
+                year_p.setTypeface(typeface);
+                year_p.setTextAlign(Paint.Align.CENTER);
+                canvas.drawText("" + year, mCenterX, mCenterY + font_size_time - 45 + font_size_date + font_size_month, year_p);
+            }
 
         }
 
@@ -354,8 +446,15 @@ public class MyWatchFace extends CanvasWatchFaceService {
          * should only run in active mode.
          */
         private boolean shouldTimerBeRunning() {
-            //return isVisible() && !mAmbient;
-            return isVisible();
+            boolean override = !mAmbient;
+
+            if(always_on){
+                override = true;
+            }
+
+            return isVisible() && override ;
+//            return isVisible() && !mAmbient ;
+//            return isVisible();
         }
 
         /**
@@ -369,6 +468,15 @@ public class MyWatchFace extends CanvasWatchFaceService {
                         - (timeMs % INTERACTIVE_UPDATE_RATE_MS);
                 mUpdateTimeHandler.sendEmptyMessageDelayed(MSG_UPDATE_TIME, delayMs);
             }
+        }
+
+        @Override
+        public void onTapCommand(int tapType, int x, int y, long eventTime) {
+            if(tapType == TAP_TYPE_TAP){
+                Intent i = new Intent(getApplicationContext(), SettingsActivity.class);
+                startActivity(i);
+            }
+//            invalidate();
         }
 
         private String read_from_sys(String command, Context context){

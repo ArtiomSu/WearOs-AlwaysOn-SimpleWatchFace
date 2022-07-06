@@ -1,4 +1,25 @@
 <resources>
     <string name="app_name">SimpleWatchFace</string>
     <string name="my_analog_name">Simple Watch Face</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+
+    <!-- Preference Titles -->
+    <string name="messages_header">Watch Face</string>
+    <string name="sync_header">Sync</string>
+    <string name="wakelock_on">Enable Wakelock</string>
+    <string name="always_on">Always On</string>
+    <string name="custom_color">Custom Color</string>
+
+
+    <string name="show_items_title">Hide Elements</string>
+    <string name="hide_elements_sub">hide different things on the watch face</string>
+    <string name="title_activity_color_picker">ColorPicker</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
 </resources>

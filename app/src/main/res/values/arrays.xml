@@ -1,0 +1,23 @@
+<resources>
+    <!-- Reply Preference -->
+    <string-array name="reply_entries">
+        <item>Reply</item>
+        <item>Reply to all</item>
+    </string-array>
+
+    <string-array name="reply_values">
+        <item>reply</item>
+        <item>reply_all</item>
+    </string-array>
+
+    <string-array name="show_clock_items">
+        <item>Uptime</item>
+        <item>Wifi</item>
+        <item>Battery</item>
+        <item>Day</item>
+        <item>Month</item>
+        <item>Year</item>
+    </string-array>
+
+    <string-array name="empty_array"/>
+</resources>
