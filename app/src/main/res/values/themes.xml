@@ -2,7 +2,64 @@
 
     <style name="AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <style name="NoBack" parent="@style/Theme.AppCompat.DayNight.NoActionBar">
+    <style name="MainAppTheme" parent="@style/Theme.AppCompat.DayNight.NoActionBar">
+        <item name="android:colorBackground">@color/black</item>
+        <item name="android:colorAccent">#EF5350</item>
+        <item name="android:colorPrimary">#FF7043</item>
+        <item name="android:colorSecondary">#FFA726</item>
+        <item name="colorSwitchThumbNormal">#FF7043</item>
+        <item name="android:panelColorBackground">#ffff</item>
+        <item name="android:colorBackgroundFloating">#0EDC07</item>
+        <item name="android:colorBackgroundCacheHint">#0edc07</item>
+        <!-- background color of when you press the hide elements -->
+        <item name="colorBackgroundFloating">@color/black</item>
+        <item name="android:colorButtonNormal">#0edc07</item>
+        <item name="colorButtonNormal">#0edc07</item>
+        <!-- switch toggle and button color -->
+        <item name="colorAccent">#EF5350</item>
+        <item name="android:titleTextColor">#0edc07</item>
+        <item name="android:subtitleTextColor">#0edc07</item>
+        <!-- Title of Preference -->
+<!--        <item name="preferenceCategoryTitleTextColor">#0edc07</item>-->
+        <item name="titleTextColor">#0edc07</item>
+        <item name="subtitleTextColor">#0edc07</item>
+        <item name="titleColor">#0edc07</item>
+        <item name="android:textColorPrimary">#FF7043</item>
+        <!-- scroll bar, hint thing and checkbox box  -->
+        <item name="android:textColorSecondary">#92FF7043</item>
+        <item name="textColor">#0edc07</item>
+        <item name="actionMenuTextColor">#0edc07</item>
+        <item name="android:actionMenuTextColor">#0edc07</item>
+        <item name="android:textColorTertiary">#0edc07</item>
+        <item name="android:textColorAlertDialogListItem">#0edc07</item>
+        <item name="editTextColor">#0edc07</item>
+        <item name="android:textColorHighlight">#0edc07</item>
+        <item name="android:textColorHint">#0edc07</item>
+        <item name="android:editTextColor">#0edc07</item>
+        <item name="android:keyTextColor">#0edc07</item>
+        <item name="android:textColorSecondaryNoDisable">#0edc07</item>
+        <item name="android:textColorLink">#0edc07</item>
+        <item name="android:textColorPrimaryInverse">#0edc07</item>
+        <item name="android:numbersTextColor">#0edc07</item>
+        <item name="textOutlineColor">#0edc07</item>
+        <item name="textFillColor">#0edc07</item>
+        <item name="android:fastScrollTextColor">#0edc07</item>
+        <item name="android:solidColor">#0edc07</item>
+        <item name="android:yearListSelectorColor">#0edc07</item>
+        <item name="android:startColor">#0edc07</item>
+        <item name="android:calendarTextColor">#0edc07</item>
+<!--        <item name="android:colorControlNormal">#0edc07</item>-->
+        <item name="android:colorPrimaryDark">#0edc07</item>
+        <item name="android:colorActivatedHighlight">#0edc07</item>
+        <item name="textColorSearchUrl">#0edc07</item>
+        <!-- Hide elements color -->
+        <item name="textColorAlertDialogListItem">#92FF7043</item>
+
+<!--        <item name="android:paddingTop">5dp</item>-->
+<!--        <item name="android:paddingBottom">5dp</item>-->
+    </style>
+
+    <style name="NoBack" parent="@style/MainAppTheme">
         <item name="android:windowSwipeToDismiss">false</item>
     </style>
 

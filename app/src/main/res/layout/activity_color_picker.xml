@@ -31,12 +31,10 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         pikolo:layout_constraintBottom_toBottomOf="@+id/colorPicker"
-        pikolo:srcCompat="?android:attr/homeAsUpIndicator"
         pikolo:layout_constraintEnd_toEndOf="parent"
         pikolo:layout_constraintStart_toStartOf="parent"
         pikolo:layout_constraintTop_toTopOf="parent"
-        android:background="@android:drawable/ic_delete"
-        android:backgroundTint="#EF4343"/>
+        android:background="@android:drawable/ic_delete"/>
 
 
 

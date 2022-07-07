@@ -1,6 +1,5 @@
 package terminal_heat_sink.simplewatchface;
 
-import android.app.usage.NetworkStatsManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -54,7 +53,7 @@ public class MyWatchFace extends CanvasWatchFaceService {
      * Updates rate in milliseconds for interactive mode. We update once a second to advance the
      * second hand.
      */
-    private static final long INTERACTIVE_UPDATE_RATE_MS = TimeUnit.SECONDS.toMillis(1);
+    private static long INTERACTIVE_UPDATE_RATE_MS = TimeUnit.SECONDS.toMillis(1);
 
     /**
      * Handler message id for updating the time periodically in interactive mode.
@@ -125,6 +124,8 @@ public class MyWatchFace extends CanvasWatchFaceService {
         private boolean always_on = false;
         private boolean wakelock_on = false;
         private boolean custom_color_enabled = false;
+        private boolean enable_rgb = false;
+        private int rgb_current_color;
 
 
         private int mainColor = Color.rgb(255,255,255);
@@ -140,6 +141,7 @@ public class MyWatchFace extends CanvasWatchFaceService {
             wakelock_on = prefs.getBoolean("wakelock_on", false);
             custom_color_enabled = prefs.getBoolean("custom_color", false);
             custom_color = prefs.getInt("font_color", mainColor);
+            rgb_current_color = Color.RED;
 
             setWatchFaceStyle(new WatchFaceStyle.Builder(MyWatchFace.this)
                     .setAcceptsTapEvents(true)
@@ -222,6 +224,7 @@ public class MyWatchFace extends CanvasWatchFaceService {
             always_on = prefs.getBoolean("always_on", false);
             wakelock_on = prefs.getBoolean("wakelock_on", false);
             custom_color_enabled = prefs.getBoolean("custom_color", false);
+            enable_rgb = prefs.getBoolean("enable_rgb", false);
 
             custom_color = prefs.getInt("font_color", mainColor);
 
@@ -239,6 +242,12 @@ public class MyWatchFace extends CanvasWatchFaceService {
                 if(mWakeLock != null && mWakeLock.isHeld()){
                     mWakeLock.release();
                 }
+            }
+
+            if(enable_rgb){
+                INTERACTIVE_UPDATE_RATE_MS = 100;
+            }else{
+                INTERACTIVE_UPDATE_RATE_MS = TimeUnit.SECONDS.toMillis(1);
             }
 
             Set<String> hide_elements =  prefs.getStringSet("hide_elements", null);
@@ -310,6 +319,14 @@ public class MyWatchFace extends CanvasWatchFaceService {
             mBackgroundPaint.setAntiAlias(true);
 
             int font_color = custom_color_enabled ? custom_color : mainColor;
+
+            if(enable_rgb){
+                float[] hsv = new float[3];
+                Color.colorToHSV(rgb_current_color, hsv);
+                hsv[0] += 1;
+                rgb_current_color = Color.HSVToColor(hsv);
+                font_color = rgb_current_color;
+            }
 
 
             Paint font_info = new Paint();

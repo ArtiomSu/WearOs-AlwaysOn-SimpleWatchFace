@@ -9,6 +9,7 @@
     <string name="wakelock_on">Enable Wakelock</string>
     <string name="always_on">Always On</string>
     <string name="custom_color">Custom Color</string>
+    <string name="enable_rgb">RGB Animation</string>
 
 
     <string name="show_items_title">Hide Elements</string>
