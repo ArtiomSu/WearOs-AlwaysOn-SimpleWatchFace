@@ -9,7 +9,7 @@ It does not turn off the screen at all after enabling some settings in the watch
 [![](https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png)](https://play.google.com/store/apps/details?id=terminal_heat_sink.simplewatchface)
 
 ## Video Guides
-[![video](https://img.youtube.com/vi/WONmNu35GFM/0.jpg)](https://www.youtube.com/watch?v=WONmNu35GFM)
+[![video](https://img.youtube.com/vi/wQ-gseShFS4/0.jpg)](https://www.youtube.com/watch?v=wQ-gseShFS4)
 
 ## Features / Settings
 You can see the screenshots bellow of every feature
